@@ -3,9 +3,15 @@ import { Play } from 'lucide-react';
 
 interface M3U8InputProps {
   onSubmit: (url: string) => void;
+  placeholder?: string;
+  videoType?: 'm3u8' | 'mp4';
 }
 
-export const M3U8Input: React.FC<M3U8InputProps> = ({ onSubmit }) => {
+export const M3U8Input: React.FC<M3U8InputProps> = ({ 
+  onSubmit, 
+  placeholder = "输入 M3U8 URL (例如: https://example.com/stream.m3u8)",
+  videoType = 'm3u8'
+}) => {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -48,7 +54,7 @@ export const M3U8Input: React.FC<M3U8InputProps> = ({ onSubmit }) => {
                 setInputValue(e.target.value);
                 if (error) setError(null);
               }}
-              placeholder="输入 M3U8 URL (例如: https://example.com/stream.m3u8)"
+              placeholder={placeholder}
               className={`w-full px-4 py-3 rounded-lg bg-slate-800 border ${
                 error ? 'border-red-500' : 'border-slate-700'
               } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200`}
@@ -67,27 +73,47 @@ export const M3U8Input: React.FC<M3U8InputProps> = ({ onSubmit }) => {
         </div>
       </form>
       
-      <div className="mt-8 bg-slate-800 p-4 rounded-lg">
-        <h3 className="text-slate-300 font-medium mb-2">示例 M3U8 URL:</h3>
-        <div className="grid gap-2 text-sm">
-          <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://s3-store.flyooo.uk/test/video/m3u8/standard/output.m3u8')}>
-            <p className="text-blue-400">https://s3-store.flyooo.uk/test/video/m3u8/standard/output.m3u8</p>
-            <p className="text-slate-500 text-xs">您提供的 M3U8 地址 (通过代理解决跨域)</p>
-          </div>
-          <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')}>
-            <p className="text-blue-400">https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8</p>
-            <p className="text-slate-500 text-xs">Mux 测试流 (支持 CORS)</p>
-          </div>
-          <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8')}>
-            <p className="text-blue-400">https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8</p>
-            <p className="text-slate-500 text-xs">Tears of Steel 电影示例 (支持 CORS)</p>
-          </div>
-          <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8')}>
-            <p className="text-blue-400">https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8</p>
-            <p className="text-slate-500 text-xs">Akamai 测试流 (支持 CORS)</p>
+      {videoType === 'm3u8' ? (
+        <div className="mt-8 bg-slate-800 p-4 rounded-lg">
+          <h3 className="text-slate-300 font-medium mb-2">示例 M3U8 URL:</h3>
+          <div className="grid gap-2 text-sm">
+            <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://s3-store.flyooo.uk/test/video/m3u8/standard/output.m3u8')}>
+              <p className="text-blue-400">https://s3-store.flyooo.uk/test/video/m3u8/standard/output.m3u8</p>
+              <p className="text-slate-500 text-xs">您提供的 M3U8 地址 (通过代理解决跨域)</p>
+            </div>
+            <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')}>
+              <p className="text-blue-400">https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8</p>
+              <p className="text-slate-500 text-xs">Mux 测试流 (支持 CORS)</p>
+            </div>
+            <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8')}>
+              <p className="text-blue-400">https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8</p>
+              <p className="text-slate-500 text-xs">Tears of Steel 电影示例 (支持 CORS)</p>
+            </div>
+            <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8')}>
+              <p className="text-blue-400">https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8</p>
+              <p className="text-slate-500 text-xs">Akamai 测试流 (支持 CORS)</p>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="mt-8 bg-slate-800 p-4 rounded-lg">
+          <h3 className="text-slate-300 font-medium mb-2">示例 MP4 URL:</h3>
+          <div className="grid gap-2 text-sm">
+            <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://media.w3.org/2010/05/sintel/trailer.mp4')}>
+              <p className="text-blue-400">https://media.w3.org/2010/05/sintel/trailer.mp4</p>
+              <p className="text-slate-500 text-xs">Sintel 预告片 (W3C 媒体)</p>
+            </div>
+            <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')}>
+              <p className="text-blue-400">https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4</p>
+              <p className="text-slate-500 text-xs">Big Buck Bunny (支持 CORS)</p>
+            </div>
+            <div className="group cursor-pointer hover:bg-slate-700 p-2 rounded" onClick={() => setInputValue('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')}>
+              <p className="text-blue-400">https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4</p>
+              <p className="text-slate-500 text-xs">Elephants Dream (支持 CORS)</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

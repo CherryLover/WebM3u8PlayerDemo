@@ -5,9 +5,10 @@ import { Loader2 } from 'lucide-react';
 
 interface VideoPlayerProps {
   url: string;
+  videoType?: 'm3u8' | 'mp4';
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, videoType = 'm3u8' }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -63,6 +64,35 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url }) => {
       if (!video) return;
       
       try {
+        // 清除之前的视频源
+        video.src = '';
+        video.load();
+        
+        // 处理 MP4 视频
+        if (videoType === 'mp4') {
+          video.src = url;
+          
+          video.addEventListener('loadedmetadata', function onLoadedMetadata() {
+            setLoading(false);
+            video.play().catch((e) => {
+              console.error('Autoplay prevented:', e);
+              setIsPlaying(false);
+            });
+            video.removeEventListener('loadedmetadata', onLoadedMetadata);
+          });
+          
+          video.addEventListener('error', function onError() {
+            const errorCode = video.error ? video.error.code : 'unknown';
+            const errorMessage = video.error ? video.error.message : '未知错误';
+            setError(`加载视频失败 (错误码: ${errorCode}): ${errorMessage}。请检查 URL 并重试。`);
+            setLoading(false);
+            video.removeEventListener('error', onError);
+          }, { once: true });
+          
+          return;
+        }
+        
+        // 处理 M3U8 视频
         if (Hls.isSupported()) {
           const hls = new Hls({
             xhrSetup: (xhr) => {
@@ -171,7 +201,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url }) => {
         videoRef.current.src = '';
       }
     };
-  }, [url]);
+  }, [url, videoType]);
 
   const handlePlayPause = () => {
     if (!videoRef.current) return;
@@ -228,7 +258,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url }) => {
     >
       {!url && !loading && !error && (
         <div className="text-center text-slate-400 p-6">
-          <p>输入 M3U8 URL 开始播放</p>
+          <p>输入{videoType === 'm3u8' ? 'M3U8' : 'MP4'} URL 开始播放</p>
         </div>
       )}
       
@@ -246,24 +276,32 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url }) => {
             <div className="mt-4 text-sm">
               <p>常见问题解决方案:</p>
               <ul className="list-disc list-inside mt-2 text-left">
-                <li>确保 URL 是有效的 .m3u8 地址</li>
-                <li>检查 M3U8 服务器是否允许跨域 (CORS) 请求</li>
-                <li>检查您的网络连接</li>
-                <li>尝试使用代理服务器中转</li>
+                {videoType === 'm3u8' ? (
+                  <>
+                    <li>确保 URL 是有效的 .m3u8 地址</li>
+                    <li>检查 M3U8 服务器是否允许跨域 (CORS) 请求</li>
+                  </>
+                ) : (
+                  <>
+                    <li>确保 URL 是有效的 .mp4 地址</li>
+                    <li>检查视频服务器是否允许跨域 (CORS) 请求</li>
+                  </>
+                )}
+                <li>尝试开启代理功能解决跨域问题</li>
+                <li>刷新页面后重试</li>
               </ul>
             </div>
           </div>
         </div>
       )}
       
-      <video 
+      <video
         ref={videoRef}
-        className="w-full h-full object-contain"
+        className="w-full h-full"
         playsInline
-        onClick={handlePlayPause}
       />
       
-      {(showControls || !isPlaying) && (
+      {showControls && url && !error && (
         <VideoControls
           isPlaying={isPlaying}
           duration={duration}

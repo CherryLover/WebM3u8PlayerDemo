@@ -4,14 +4,19 @@ import { History, ExternalLink } from 'lucide-react';
 interface PlayHistoryProps {
   history: string[];
   onSelect: (url: string) => void;
+  title?: string;
 }
 
-export const PlayHistory: React.FC<PlayHistoryProps> = ({ history, onSelect }) => {
+export const PlayHistory: React.FC<PlayHistoryProps> = ({ 
+  history, 
+  onSelect,
+  title = "最近播放"
+}) => {
   return (
     <div className="bg-slate-800 rounded-xl p-4 shadow-lg">
       <div className="flex items-center gap-2 mb-3">
         <History size={18} className="text-slate-400" />
-        <h2 className="text-lg font-medium">最近播放</h2>
+        <h2 className="text-lg font-medium">{title}</h2>
       </div>
       
       <ul className="space-y-2 max-h-48 overflow-y-auto">
