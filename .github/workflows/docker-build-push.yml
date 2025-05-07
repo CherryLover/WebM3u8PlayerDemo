@@ -41,3 +41,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: 触发 Dokploy 部署https://dokploy.flyooo.uk/api/deploy/YROtFuiAzvb2_7UMwPbSC' 
