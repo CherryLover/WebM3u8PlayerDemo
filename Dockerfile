@@ -18,8 +18,9 @@ RUN npm run build
 # 暴露端口 - 5173 用于前端，3000 用于代理服务器（根据您的应用调整）
 EXPOSE 5173 3000
 
-# 修改启动方式，确保前台进程持续运行
-RUN echo '#!/bin/sh\nnpm run proxy & npm run dev -- --host 0.0.0.0' > /app/start.sh && chmod +x /app/start.sh
+# 创建启动脚本，使用绝对路径
+COPY ./start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 # 设置启动命令
-CMD ["/bin/sh", "-c", "cd /app && ./start.sh"] 
+CMD ["/bin/sh", "/app/start.sh"] 
