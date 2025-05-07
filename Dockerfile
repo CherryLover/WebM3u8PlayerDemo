@@ -19,7 +19,7 @@ RUN npm run build
 EXPOSE 5173 3000
 
 # 创建启动脚本
-RUN echo "#!/bin/sh\nnpm run proxy & npm run dev" > start.sh && chmod +x start.sh
+RUN echo "#!/bin/sh\nnpm run proxy & npm run dev" > /app/start.sh && chmod +x /app/start.sh
 
 # 设置启动命令
-CMD ["./start.sh"] 
+CMD ["/bin/sh", "/app/start.sh"] 
